@@ -26,6 +26,10 @@ aber mit umgedrehtem Kern:
   erklären neu, *warum* der Kontakt abbrach.
 - **Du kannst nicht alles retten.** Am Ende darfst du nur **drei Dinge** mitnehmen.
   Der Rest wird für immer entsorgt.
+- **Aus den drei Dingen wird sein Nachruf.** Die behaltenen Gegenstände setzen sich
+  zu einer **Traueranzeige** zusammen; was du zurückgelassen hast, bleibt darin als
+  „—" leer. Du, der ihm zuletzt nur Minuten gab, definierst öffentlich, wer er war —
+  in drei Zeilen.
 - **Die gewählte Dauer ist selbst eine Aussage.** 20 / 30 / 60 Minuten — wie viel
   Zeit gibst du ihm? Am kürzesten Ende siehst du nicht alles. Das ist Absicht, und
   das Ende weiß es.
@@ -57,7 +61,7 @@ Timing und Endauswahl passen sich automatisch an.
 
 ## Status / Roadmap
 
-- [x] Kern-Skelett: Zeitwahl → Nachlass durchsehen → Zeit läuft ab → drei Dinge behalten → Ende
+- [x] Kern-Skelett: Zeitwahl → Nachlass durchsehen → Zeit läuft ab → drei Dinge behalten → Traueranzeige
 - [x] Drei Beispiel-Objekte mit deutschen Fragmenten (u. a. der Anrufbeantworter — die einzige „Stimme" des Verstorbenen)
 - [ ] Vollständiger Nachlass (8–10 Stücke) + der rote Faden der Entfremdung
 - [ ] Raum als anklickbares Bild (imagemap) statt Menüliste

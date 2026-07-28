@@ -28,6 +28,8 @@ init python:
             "epilogue":
                 "Das Sparbuch hast du behalten. Dreißig Jahre, zwanzig Mark im "
                 "Monat, für ein Kind, das nicht mehr anrief.",
+            "nachruf":
+                "Er sparte dreißig Jahre für ein Kind, das nicht mehr anrief.",
         },
         {
             "id": "anrufbeantworter",
@@ -38,6 +40,8 @@ init python:
             "epilogue":
                 "Die Nachricht hast du mitgenommen. Ob du sie je abhörst, "
                 "weißt du noch nicht.",
+            "nachruf":
+                "Er hob eine Nachricht auf, die nie beantwortet wurde.",
         },
         {
             "id": "fotoalbum",
@@ -49,6 +53,8 @@ init python:
                 "ansehen noch wegwerfen.",
             "epilogue":
                 "Das Album war zu schwer. Du hast nur den Umschlag mitgenommen.",
+            "nachruf":
+                "Er konnte die Bilder weder ansehen noch wegwerfen.",
         },
     ]
 
@@ -125,17 +131,30 @@ label movers:
     jump ending
 
 
-## --- Ende ----------------------------------------------------------------
+## --- Ende: die Traueranzeige --------------------------------------------
+## Die drei behaltenen Dinge werden zum Nachruf. Was du nicht mitgenommen hast,
+## bleibt als "—" leer: das, was du nie über ihn erfahren wirst.
 label ending:
     scene black
-    if kept:
-        narr "Was du mitnimmst:"
-        python:
-            for oid in kept:
-                renpy.say(narr, obj(oid)["epilogue"])
-    else:
-        narr "Du gehst mit leeren Händen."
+    if not kept:
+        narr "Du gehst mit leeren Händen. Es gibt nichts zu behalten — und nichts zu sagen."
+        jump ending_schluss
 
+    narr "Was du mitnimmst:"
+    python:
+        for oid in kept:
+            renpy.say(narr, obj(oid)["epilogue"])
+
+    narr "Später sollst du für die Zeitung ein paar Zeilen aufsetzen. Eine Traueranzeige."
+    narr "Alles, was du über ihn sagen kannst, steht in dem, was du mitgenommen hast. Der Rest bleibt leer."
+
+    python:
+        _zeilen = [(o["nachruf"] if o["id"] in kept else "—") for o in OBJECTS]
+        anzeige = "\n".join(_zeilen)
+
+    narr "{i}✝  In stillem Gedenken{/i}\n\n[anzeige]\n\nWas von ihm bleibt, passt in einen Schuhkarton."
+
+label ending_schluss:
     # Reflexion nach gewählter Dauer — die Zeit, die du ihm gegeben hast.
     if time_budget == 60:
         narr "Du hast dir eine Stunde genommen. Das erste Mal seit Jahren."
