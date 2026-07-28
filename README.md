@@ -34,6 +34,39 @@ aber mit umgedrehtem Kern:
   Zeit gibst du ihm? Am kürzesten Ende siehst du nicht alles. Das ist Absicht, und
   das Ende weiß es.
 
+## In English
+
+**NACHLASS** (German for *the estate a dead person leaves behind*) is a short,
+bilingual (DE/EN) memory game built in Ren'Py. You have one hour — or 20 / 30
+minutes, your choice — before the clearance crew empties the flat of a
+grandfather you hadn't spoken to in years, and who is now dead. You can't talk to
+him. You can only work out who he was from the nine things he left behind.
+
+It began as a response to [*The Last Hour of Pal*](https://foxechoo.itch.io/the-last-hour-of-pal),
+but inverts its core:
+
+- **Not a friend — an estranged, dead relative.** The exchange is one-sided. You
+  *reconstruct* a person instead of saying goodbye; this is as close as you'll
+  ever get to him again.
+- **No dialogue tree — an estate.** Objects carry the memory. A thread runs
+  through them: his guilt after his daughter's death, the last phone call he
+  couldn't hear (the hearing aid in the drawer), the letters you both refused,
+  the unsent one where he *almost* says it.
+- **You can't save everything.** At the end you may keep only **three** objects.
+  The rest is thrown out for good.
+- **The three become his obituary.** Your kept objects compose a *Traueranzeige*
+  (death notice); everything you left behind shows up in it as a blank “—”. You,
+  who gave him only minutes, get to define in public who he was — in three lines.
+- **The duration is itself a verdict.** At the shortest setting you can't see
+  everything. That's intentional, and the ending knows how much time you gave him.
+
+**Playtime:** 20 / 30 / 60 minutes, chosen at launch. Each object costs time; at
+20 minutes it isn't enough for all of them.
+
+**Run it / extend it / assets:** see the sections below and
+[`ASSETS.md`](ASSETS.md) for the art & audio brief (including the German voice
+script for the answering-machine message).
+
 ## Spielzeit / Playtime
 
 Beim Start wählbar: **20 · 30 · 60 Minuten.** Jedes Erinnerungsstück kostet Zeit;
@@ -81,6 +114,10 @@ läuft das Spiel sauber weiter (Textliste statt Raumbild, Stille statt Ton). Zum
   Anrufbeantworter (das einzige Mal, dass er „spricht").
 - Enthalten sind bereits **Platzhalter**: `game/audio/uhr.wav` (Ticken der Uhr)
   und `game/audio/piep.wav` (Beep des Anrufbeantworters).
+
+> Vollständige Spezifikation (Größen, Längen, Stimmung, **Sprechtext für die
+> Anrufbeantworter-Nachricht**): **[`ASSETS.md`](ASSETS.md)**.
+> Full art & audio spec, incl. the answering-machine voice script, in `ASSETS.md`.
 
 ## Status / Roadmap
 
