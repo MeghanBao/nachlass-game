@@ -3,8 +3,7 @@
 ##
 ## Zweisprachig (DE/EN) über eine Sprachvariable — keine Ren'Py-tl-Hashes nötig.
 ## Bild & Ton sind über renpy.loadable() abgesichert: fehlen die Assets, fällt
-## das Spiel sauber auf die Textliste bzw. Stille zurück. Es läuft also sofort;
-## echte Raumgrafik / Raumton / die Stimme des Verstorbenen kommen später dazu.
+## das Spiel sauber auf die Textliste bzw. Stille zurück. Siehe ASSETS.md.
 
 define narr = Character(None)
 image raum = "images/raum.png"   # optional; wird nur gezeigt, wenn vorhanden
@@ -15,12 +14,19 @@ default time_budget = 60      # gewählte Dauer in Minuten (20 / 30 / 60)
 default time_spent = 0        # verbrauchte Aufmerksamkeit
 default examined = []         # ids der angesehenen Stücke
 default kept = []             # ids der mitgenommenen Stücke (max. 3)
+default uhrzeit = "15:00"     # Anzeige der Standuhr im Raum
+default deadline = "16:00"    # wann die Entrümpelung kommt
 
 init python:
-    COST = 8  # Minuten, die jedes Erinnerungsstück kostet
+    COST = 8          # Minuten, die jedes Erinnerungsstück kostet
+    START_MIN = 900   # 15:00 Uhr — Beginn der letzten Stunde
 
     # Eigener, geloopter Kanal für das Ticken der Uhr.
     renpy.music.register_channel("uhr", mixer="sfx", loop=True)
+
+    def hhmm(total_min):
+        h, m = divmod(total_min, 60)
+        return "%02d:%02d" % (h, m)
 
     def L(d):
         # aktuelle Sprache wählen, sonst Deutsch
@@ -48,6 +54,18 @@ init python:
         renpy.say(narr, L(o["name"]))
         renpy.say(narr, L(o["fragment"]))
 
+    def coda_key():
+        # Die drei behaltenen Dinge: welche Fassung von ihm hast du bewahrt?
+        tones = [obj(oid)["ton"] for oid in kept]
+        h = tones.count("hart"); u = tones.count("unvollendet"); w = tones.count("warm")
+        if h >= 2:
+            return "coda_hart"
+        elif u >= 2:
+            return "coda_unvollendet"
+        elif w >= 2 and h == 0:
+            return "coda_warm"
+        return "coda_gemischt"
+
     # --- Erzähltexte ----------------------------------------------------
     TXT = {
         "tot": {"de": "Dein Großvater ist tot.",
@@ -56,8 +74,12 @@ init python:
                   "en": "You hadn't spoken in years. Now you're clearing out his flat — there's no one else."},
         "zeit_frage": {"de": "Wie viel Zeit gibst du ihm?",
                        "en": "How much time will you give him?"},
-        "entruempelung": {"de": "In {min} Minuten kommt die Entrümpelung. Danach ist die Wohnung leer.",
-                          "en": "In {min} minutes the clearance crew arrives. After that the flat is empty."},
+        "entruempelung": {"de": "In {min} Minuten — um {zeit} Uhr — kommt die Entrümpelung. Danach ist die Wohnung leer.",
+                          "en": "In {min} minutes — at {zeit} — the clearance crew arrives. After that the flat is empty."},
+        "raum1": {"de": "Die Wohnung riecht nach kaltem Rauch und Bohnerwachs. Die Standuhr geht noch.",
+                  "en": "The flat smells of cold smoke and floor wax. The grandfather clock is still ticking."},
+        "raum2": {"de": "Auf allem liegt eine dünne Schicht Staub. Ein paar leere Umzugskartons warten schon. Du hast nicht lange. Fang an.",
+                  "en": "A thin film of dust lies over everything. A few empty moving boxes are already waiting. You don't have long. Begin."},
         "verlassen": {"de": "(Die Wohnung verlassen)",
                       "en": "(Leave the flat)"},
         "autotuer": {"de": "Draußen schlägt eine Autotür.",
@@ -82,6 +104,16 @@ init python:
                          "en": "In quiet remembrance"},
         "anzeige_fuss": {"de": "Was von ihm bleibt, passt in einen Schuhkarton.",
                          "en": "What remains of him fits in a shoebox."},
+        # Coda — reagiert darauf, welche Fassung von ihm du bewahrt hast
+        "coda_warm": {"de": "Du hast dir den sanften Großvater aufgehoben. Vielleicht darfst du das. Vielleicht ist das genug.",
+                      "en": "You kept the gentle grandfather. Maybe you're allowed to. Maybe that's enough."},
+        "coda_hart": {"de": "Du hast nichts beschönigt. Er war auch der, der er war — das schuldest du wenigstens der Wahrheit.",
+                      "en": "You sugar-coated nothing. He was also the man he was — you owe the truth at least that much."},
+        "coda_unvollendet": {"de": "Du hast die halben Sätze mitgenommen. Das Gespräch, das nie zu Ende ging — jetzt trägst du es allein weiter.",
+                             "en": "You took the half-sentences. The conversation that never finished — now you carry it on alone."},
+        "coda_gemischt": {"de": "Zärtlich, schwierig, unfertig — du hast ihn ganz mitgenommen, im Widerspruch. So, wie er war.",
+                          "en": "Tender, difficult, unfinished — you took all of him, contradiction and all. As he was."},
+        # Reflexion nach gewählter Dauer
         "refl_60": {"de": "Du hast dir eine Stunde genommen. Das erste Mal seit Jahren.",
                     "en": "You gave yourself an hour. The first time in years."},
         "refl_30": {"de": "Dreißig Minuten. Mehr, als ihr in den letzten Jahren je füreinander hattet.",
@@ -90,15 +122,19 @@ init python:
                     "en": "Twenty minutes. You never wanted to give him more."},
         "tuer_schloss": {"de": "Die Tür fällt ins Schloss.",
                          "en": "The door falls shut."},
+        "credits1": {"de": "NACHLASS — Die letzte Stunde",
+                     "en": "NACHLASS — The Last Hour"},
+        "credits2": {"de": "Inspiriert von »The Last Hour of Pal« von FoxEcho.\nEin Spiel von Meghan Bao.",
+                     "en": "Inspired by 'The Last Hour of Pal' by FoxEcho.\nA game by Meghan Bao."},
     }
 
     # --- Der Nachlass: 9 Stücke, ein roter Faden --------------------------
-    # Warmes, Schuld, die Wende (er hörte dich nicht mehr), das gegenseitige
-    # Schweigen, die tote Tochter zwischen euch, das Unausgesprochene.
-    # pos = (x, y) für spätere anklickbare Raumgrafik (1280x720).
+    # ton: "warm" (stille Zuneigung) | "hart" (seine Schuld/Schroffheit) |
+    #      "unvollendet" (das nie zu Ende Gebrachte). Steuert die Coda am Ende.
+    # pos = (x, y) für die anklickbare Raumgrafik (1280x720).
     OBJECTS = [
         {
-            "id": "sparbuch", "pos": (180, 430),
+            "id": "sparbuch", "pos": (180, 430), "ton": "warm",
             "name": {"de": "Das Sparbuch", "en": "The savings book"},
             "fragment": {
                 "de": "Jeden Monat zwanzig Mark. Seit 1994, auf deinen Namen. Du hast nie davon gewusst.\nDie letzte Einzahlung war im März — der Monat, in dem du aufgehört hast, ans Telefon zu gehen.",
@@ -109,7 +145,7 @@ init python:
                          "en": "You kept the savings book."},
         },
         {
-            "id": "anrufbeantworter", "pos": (980, 300),
+            "id": "anrufbeantworter", "pos": (980, 300), "ton": "unvollendet",
             "sound": "audio/nachricht.ogg",   # seine Stimme — echtes VO kommt später
             "name": {"de": "Der Anrufbeantworter", "en": "The answering machine"},
             "fragment": {
@@ -121,7 +157,7 @@ init python:
                          "en": "You took the message. Whether you'll ever play it, you don't know."},
         },
         {
-            "id": "fotoalbum", "pos": (520, 520),
+            "id": "fotoalbum", "pos": (520, 520), "ton": "warm",
             "name": {"de": "Das Fotoalbum", "en": "The photo album"},
             "fragment": {
                 "de": "Seite um Seite du als Kind. Dann, ab einem bestimmten Jahr, nur noch leere Ecken — die Bilder herausgenommen, nicht weggeworfen.\nIn einem Umschlag hinten: genau diese Fotos. Er konnte sie weder ansehen noch wegwerfen.",
@@ -132,7 +168,7 @@ init python:
                          "en": "The album was too heavy. You took only the envelope."},
         },
         {
-            "id": "flaschen", "pos": (300, 600),
+            "id": "flaschen", "pos": (300, 600), "ton": "hart",
             "name": {"de": "Die leeren Flaschen", "en": "The empty bottles"},
             "fragment": {
                 "de": "Im Keller, in Reih und Glied, sauber gestapelt. Es beginnt in dem Jahr, in dem Mama starb — dasselbe Jahr, in dem im Album die Ecken leer werden.\nEr hat auch das aufgehoben. Ordentlich. Als wollte er nichts vergessen, was er sich vorzuwerfen hatte.",
@@ -143,7 +179,7 @@ init python:
                          "en": "You leave the bottles. But you don't forget them."},
         },
         {
-            "id": "hoergeraet", "pos": (760, 440),
+            "id": "hoergeraet", "pos": (760, 440), "ton": "unvollendet",
             "name": {"de": "Das Hörgerät", "en": "The hearing aid"},
             "fragment": {
                 "de": "In der Nachttischschublade, die Batterie längst leer. Nie getragen — aus Sturheit, aus Stolz.\nDu erinnerst dich an das letzte Telefonat. Du hast geschrien, er hat geschwiegen. Du dachtest, er ignoriert dich. Er hat dich nur nicht gehört.",
@@ -154,7 +190,7 @@ init python:
                          "en": "You pocket the hearing aid. Too late, but you pocket it."},
         },
         {
-            "id": "rueckbrief", "pos": (140, 250),
+            "id": "rueckbrief", "pos": (140, 250), "ton": "hart",
             "name": {"de": "Der zurückgeschickte Brief", "en": "The returned letter"},
             "fragment": {
                 "de": "Ein Brief von ihm an dich, ungeöffnet. Quer über den Umschlag, in deiner eigenen Handschrift: »Annahme verweigert«.\nDer Poststempel ist elf Jahre alt. Er hat den zurückgeschickten Brief aufbewahrt — deine Abfuhr, schwarz auf weiß.",
@@ -165,7 +201,7 @@ init python:
                          "en": "You take the letter — still unopened."},
         },
         {
-            "id": "foto_mutter", "pos": (620, 200),
+            "id": "foto_mutter", "pos": (620, 200), "ton": "warm",
             "name": {"de": "Das Foto deiner Mutter", "en": "The photo of your mother"},
             "fragment": {
                 "de": "Das einzige Bild, das er offen stehen ließ: seine Tochter. Deine Mutter. Die Ränder abgegriffen von Daumen.\nZwischen euch stand immer sie. Er hat sie verloren. Dir hat sie gefehlt. Keiner von euch konnte darüber reden.",
@@ -176,7 +212,7 @@ init python:
                          "en": "You take the photo of your mother. That was never in question."},
         },
         {
-            "id": "gartenschluessel", "pos": (1050, 560),
+            "id": "gartenschluessel", "pos": (1050, 560), "ton": "warm",
             "name": {"de": "Der Schrebergartenschlüssel", "en": "The allotment key"},
             "fragment": {
                 "de": "Ein rostiger Schlüssel am Bast. Der Garten, in dem du jeden Sommer warst, bevor alles kaputtging. Johannisbeeren, seine Schultern, du obendrauf.\nJetzt ist er verwildert. Aber es gab ihn: einen Garten, einen Sommer, bevor Mama starb.",
@@ -187,11 +223,11 @@ init python:
                          "en": "You keep the key. Maybe you'll drive out there someday."},
         },
         {
-            "id": "ungesendet", "pos": (860, 180),
+            "id": "ungesendet", "pos": (860, 180), "ton": "unvollendet",
             "name": {"de": "Der ungesendete Brief", "en": "The unsent letter"},
             "fragment": {
-                "de": "In der Schublade, unter dem Hörgerät. An dich gerichtet, nie abgeschickt.\n»Ich weiß, dass ich vieles falsch gemacht habe. Ich wollte dir sagen, dass —« Hier bricht er ab. Der Rest der Seite ist leer.\nEr hat die Worte gefunden. Er hat sie nur nie losgeschickt.",
-                "en": "In the drawer, under the hearing aid. Addressed to you, never sent.\n'I know I got a lot of things wrong. I wanted to tell you that —' Here it breaks off. The rest of the page is blank.\nHe found the words. He just never sent them."},
+                "de": "In der Schublade, unter dem Hörgerät. An dich gerichtet, nie abgeschickt.\n»Ich wollte dir sagen, dass —« Hier bricht er ab. Der Rest der Seite ist leer.\nEr hat die Worte gefunden. Er hat sie nur nie losgeschickt.",
+                "en": "In the drawer, under the hearing aid. Addressed to you, never sent.\n'I wanted to tell you that —' Here it breaks off. The rest of the page is blank.\nHe found the words. He just never sent them."},
             "nachruf": {"de": "Er fand die Worte. Er schickte sie nie ab.",
                         "en": "He found the words. He never sent them."},
             "epilogue": {"de": "Den ungesendeten Brief nimmst du mit. Du wirst zu Ende lesen, was nicht dasteht.",
@@ -201,7 +237,7 @@ init python:
 
 
 ## --- Anklickbarer Raum (nur aktiv, wenn images/raum.png vorhanden) --------
-screen raum_screen(hud):
+screen raum_screen():
     add "raum"
     for o in OBJECTS:
         if o["id"] not in examined:
@@ -212,14 +248,23 @@ screen raum_screen(hud):
     textbutton L(TXT["verlassen"]):
         align (0.5, 0.98)
         action Return("_leave")
-    text hud:
+
+## --- Standuhr-Anzeige (in beiden Modi sichtbar) --------------------------
+screen uhr_hud():
+    text "[uhrzeit]":
         align (0.98, 0.02)
-        size 28
+        size 30
+        outlines [(2, "#000000", 0, 0)]
 
 
 ## --- Start ---------------------------------------------------------------
 label start:
     scene black
+    # Zustand für einen sauberen (Neu-)Start zurücksetzen
+    $ time_spent = 0
+    $ examined = []
+    $ kept = []
+
     $ renpy.say(narr, "Sprache — Language")
     python:
         lang = renpy.display_menu([("Deutsch", "de"), ("English", "en")])
@@ -234,8 +279,9 @@ label start:
             (u"30 Minuten" if lang == "de" else u"30 minutes", "30"),
             (u"Eine Stunde" if lang == "de" else u"One hour", "60"),
         ]))
+        deadline = hhmm(START_MIN + time_budget)
 
-    $ erzf("entruempelung", min=time_budget)
+    $ erzf("entruempelung", min=time_budget, zeit=deadline)
     jump room
 
 
@@ -249,12 +295,15 @@ label room:
     if renpy.loadable("audio/uhr.wav"):
         play uhr "audio/uhr.wav"
 
+    $ erz("raum1")
+    $ erz("raum2")
+    show screen uhr_hud
+
     while time_spent < time_budget and len(examined) < len(OBJECTS):
         python:
-            remaining = time_budget - time_spent
-            hud = (u"Noch %d Minuten" % remaining) if lang == "de" else (u"%d minutes left" % remaining)
+            uhrzeit = hhmm(START_MIN + time_spent)
             if renpy.loadable("images/raum.png"):
-                _choice = renpy.call_screen("raum_screen", hud)
+                _choice = renpy.call_screen("raum_screen")
             else:
                 opts = [(L(o["name"]), o["id"]) for o in OBJECTS if o["id"] not in examined]
                 opts.append((L(TXT["verlassen"]), "_leave"))
@@ -263,7 +312,7 @@ label room:
         if _choice == "_leave":
             jump movers
 
-        $ examined.append(_choice)
+        $ examined = examined + [_choice]   # rollback-sicher (neue Liste)
         $ time_spent += COST
         $ zeig_objekt(_choice)
 
@@ -275,6 +324,7 @@ label room:
 
 ## --- Die Entrümpelung kommt ---------------------------------------------
 label movers:
+    hide screen uhr_hud
     scene black
     if renpy.loadable("audio/uhr.wav"):
         stop uhr fadeout 1.0
@@ -291,14 +341,14 @@ label movers:
             _pick = renpy.display_menu(opts)
         if _pick == "_done":
             jump ending
-        $ kept.append(_pick)
+        $ kept = kept + [_pick]   # rollback-sicher
 
     jump ending
 
 
 ## --- Ende: die Traueranzeige --------------------------------------------
-## Die behaltenen Dinge werden zum Nachruf. Was du nicht mitgenommen hast,
-## bleibt als "—" leer: das, was du nie über ihn erfahren wirst.
+## Die behaltenen Dinge werden zum Nachruf; was du nicht mitnahmst, bleibt "—".
+## Die Coda reagiert darauf, welche Fassung von ihm du bewahrt hast.
 label ending:
     scene black
     if not kept:
@@ -317,6 +367,8 @@ label ending:
         anzeige = u"{i}✝  " + L(TXT["anzeige_kopf"]) + u"{/i}\n\n" + u"\n".join(zeilen) + u"\n\n" + L(TXT["anzeige_fuss"])
         renpy.say(narr, anzeige)
 
+    $ erz(coda_key())
+
 label ending_schluss:
     if time_budget == 60:
         $ erz("refl_60")
@@ -326,4 +378,9 @@ label ending_schluss:
         $ erz("refl_20")
 
     $ erz("tuer_schloss")
+
+    # Abspann
+    scene black with fade
+    $ erz("credits1")
+    $ erz("credits2")
     return

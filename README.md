@@ -126,8 +126,16 @@ läuft das Spiel sauber weiter (Textliste statt Raumbild, Stille statt Ton). Zum
 - [x] Raum als anklickbares Bild — Code fertig, aktiviert sich mit `raum.png` *(Grafik ausstehend)*
 - [x] Ton: Uhr + Anrufbeantworter-Beep als Platzhalter, Atmosphäre & Stimme abgesichert verdrahtet *(echte Assets ausstehend)*
 - [x] Zweisprachig Deutsch / Englisch
-- [ ] Echte Raumgrafik, Raumton und die Stimme auf dem Anrufbeantworter
+- [x] Feinschliff: Raum-Einstieg (Atmosphäre), Standuhr-Anzeige (Zeit läuft), **Ende reagiert auf die behaltenen Dinge** (warme / harte / unvollendete Coda), Abspann + Lizenz, rollback-sicherer Zustand
+- [ ] Echte Raumgrafik, Raumton und die Stimme auf dem Anrufbeantworter *(→ [`ASSETS.md`](ASSETS.md))*
 - [ ] Playtest im Ren'Py-SDK
+
+## Lizenz / License
+
+Code unter **MIT** (siehe [`LICENSE`](LICENSE)). Erzähltext & Design © 2026
+Meghan Bao. *The Last Hour of Pal* von FoxEcho ist als Inspiration genannt.
+
+> Code under MIT; narrative text & design © 2026 Meghan Bao.
 
 ---
 
