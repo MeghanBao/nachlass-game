@@ -41,32 +41,56 @@ bei 20 Minuten reicht sie nicht für alles.
 
 ## Ausführen / Run it
 
-Dieses Repo enthält das **Spiel-Skript**, nicht die Ren'Py-Engine.
+Dieses Repo enthält das **Spiel** (`game/` mit Skript, Platzhalter-Ton), nicht
+die Ren'Py-Engine.
 
 1. [Ren'Py SDK](https://www.renpy.org/latest.html) herunterladen (kostenlos).
 2. Im Launcher **„Neues Projekt erstellen"** → Name `nachlass`.
-3. Die generierte Datei `game/script.rpy` durch die aus diesem Repo ersetzen
-   (`game/script.rpy`).
-4. **„Starten"** klicken.
+3. Den Inhalt von `game/` aus diesem Repo in den `game/`-Ordner des neuen
+   Projekts kopieren — `script.rpy` **ersetzen**, die Ordner `audio/` und
+   `images/` dazulegen. Die generierten `options.rpy`, `gui.rpy`, `screens.rpy`
+   (Menü- und Textfenster-GUI) **behalten**.
+4. **„Starten"** klicken. Beim Start wählst du **Sprache (DE/EN)** und **Dauer**.
 
-> Die vom Launcher erzeugten Vorlagendateien (`options.rpy`, `gui.rpy`,
-> `screens.rpy`) liefern das Menü- und Textfenster-GUI und werden hier bewusst
-> nicht mitgetrackt — nur das Spiel selbst.
+> Ohne SDK hier nicht ausführbar; die Spiellogik und alle Texte sind aber per
+> Python-Selbsttest geprüft (9 Objekte, alle DE+EN vollständig).
+
+## Sprache / Language
+
+Zweisprachig **Deutsch / Englisch** über eine Sprachvariable (Auswahl beim Start),
+ohne Ren'Py-`translate`-Hashes — Texte liegen als `{"de": …, "en": …}` in den Daten.
 
 ## Erweitern / Extend
 
-Neue Erinnerungsstücke: einen Eintrag zur Liste `OBJECTS` in `game/script.rpy`
-hinzufügen (`id`, `name`, `fragment`, `epilogue`). Sonst nichts nötig — Menü,
-Timing und Endauswahl passen sich automatisch an.
+Neues Erinnerungsstück: einen Eintrag zur Liste `OBJECTS` in `game/script.rpy`
+hinzufügen. Felder: `id`, `pos` (x, y für die Raumgrafik), und je zweisprachig
+`name`, `fragment`, `nachruf` (Zeile für die Traueranzeige), `epilogue`. Optional
+`sound`. Menü, Timing, Traueranzeige und Endauswahl passen sich automatisch an.
+
+## Assets noch offen / Assets still needed
+
+Der Code ist fertig und über `renpy.loadable()` abgesichert — fehlt eine Datei,
+läuft das Spiel sauber weiter (Textliste statt Raumbild, Stille statt Ton). Zum
+„echten" Look/Sound noch einzulegen:
+
+- `game/images/raum.png` — Raumgrafik (1280×720). Vorhanden → der Raum wird
+  **anklickbar** (Hotspots liegen schon auf den `pos`-Koordinaten der Objekte);
+  fehlt sie → automatische Menüliste.
+- `game/audio/raum.ogg` — Zimmeratmosphäre (Loop).
+- `game/audio/nachricht.ogg` — **die Stimme des Verstorbenen** auf dem
+  Anrufbeantworter (das einzige Mal, dass er „spricht").
+- Enthalten sind bereits **Platzhalter**: `game/audio/uhr.wav` (Ticken der Uhr)
+  und `game/audio/piep.wav` (Beep des Anrufbeantworters).
 
 ## Status / Roadmap
 
 - [x] Kern-Skelett: Zeitwahl → Nachlass durchsehen → Zeit läuft ab → drei Dinge behalten → Traueranzeige
-- [x] Drei Beispiel-Objekte mit deutschen Fragmenten (u. a. der Anrufbeantworter — die einzige „Stimme" des Verstorbenen)
-- [ ] Vollständiger Nachlass (8–10 Stücke) + der rote Faden der Entfremdung
-- [ ] Raum als anklickbares Bild (imagemap) statt Menüliste
-- [ ] Ton: Zimmeratmosphäre, Uhr, die Nachricht auf dem Anrufbeantworter
-- [ ] Englische Sprachfassung (Ren'Py `translate`)
+- [x] Vollständiger Nachlass: **9 Stücke** mit rotem Faden der Entfremdung (Schuld, das nicht mehr gehörte Telefonat, das gegenseitige Schweigen, die tote Tochter dazwischen, das Unausgesprochene)
+- [x] Raum als anklickbares Bild — Code fertig, aktiviert sich mit `raum.png` *(Grafik ausstehend)*
+- [x] Ton: Uhr + Anrufbeantworter-Beep als Platzhalter, Atmosphäre & Stimme abgesichert verdrahtet *(echte Assets ausstehend)*
+- [x] Zweisprachig Deutsch / Englisch
+- [ ] Echte Raumgrafik, Raumton und die Stimme auf dem Anrufbeantworter
+- [ ] Playtest im Ren'Py-SDK
 
 ---
 
