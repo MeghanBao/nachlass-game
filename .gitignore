@@ -1,0 +1,23 @@
+# Ren'Py compiled / generated
+*.rpyc
+*.rpymc
+*.rpyb
+game/cache/
+game/saves/
+game/bytecode.rpyb
+
+# Ren'Py SDK if placed inside the repo
+/renpy-*-sdk/
+lib/
+renpy/
+
+# Builds / distributions
+*.zip
+*-dists/
+/dist/
+
+# OS / editor
+.DS_Store
+*.swp
+.vscode/
+.idea/
