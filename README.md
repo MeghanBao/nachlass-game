@@ -1,5 +1,7 @@
 # NACHLASS — *Die letzte Stunde*
 
+[![selftest](https://github.com/MeghanBao/nachlass-game/actions/workflows/selftest.yml/badge.svg)](https://github.com/MeghanBao/nachlass-game/actions/workflows/selftest.yml)
+
 Ein kurzes, textbasiertes Erinnerungsspiel auf Deutsch. / A short German-language
 memory game.
 
@@ -89,12 +91,13 @@ die Ren'Py-Engine.
 > Selbsttest ohne Engine geprüft — `python3 selftest.py` (9 Objekte, alle DE+EN
 > vollständig, jede Coda-Verzweigung erreichbar).
 
-**Platzhalter-Raum / placeholder room.** Damit sich der anklickbare Raum sofort
-testen lässt, erzeugt `python tools/make_placeholder_room.py` ein deutlich als
-*PLATZHALTER* markiertes `game/images/raum.png` (1280×720) mit den 9 Objekten an
-ihren `pos`-Koordinaten. Ideal, um die Hotspots gegen die finale Grafik zu prüfen;
-die echte Kunst überschreibt die Datei später (siehe [`ASSETS.md`](ASSETS.md)).
-Benötigt Pillow (`pip install Pillow`).
+**Platzhalter-Grafiken / placeholder graphics.** `python tools/make_placeholders.py`
+erzeugt zwei deutlich als *PLATZHALTER* markierte Bilder (1280×720):
+`game/images/raum.png` (die 9 Objekte an ihren `pos`-Koordinaten — ideal, um die
+Hotspots gegen die finale Grafik zu prüfen) und `game/images/titel.png` (die
+Titelkarte beim Start). Beide sind `renpy.loadable`-abgesichert und werden von
+echter Kunst einfach überschrieben (siehe [`ASSETS.md`](ASSETS.md)). Nur `raum`
+oder nur `title`: als Argument übergeben. Benötigt Pillow (`pip install Pillow`).
 
 ## Sprache / Language
 
@@ -131,8 +134,9 @@ läuft das Spiel sauber weiter (Textliste statt Raumbild, Stille statt Ton). Zum
 
 - [x] Kern-Skelett: Zeitwahl → Nachlass durchsehen → Zeit läuft ab → drei Dinge behalten → Traueranzeige
 - [x] Vollständiger Nachlass: **9 Stücke** mit rotem Faden der Entfremdung (Schuld, das nicht mehr gehörte Telefonat, das gegenseitige Schweigen, die tote Tochter dazwischen, das Unausgesprochene)
-- [x] Raum als anklickbares Bild — Code fertig, aktiviert sich mit `raum.png`; **Platzhalter-Generator** (`tools/make_placeholder_room.py`) legt sofort ein testbares `raum.png` an *(echte Grafik ausstehend)*
-- [x] Datenselbsttest ohne Engine (`selftest.py`) — 9 Objekte, DE+EN, Coda-Logik
+- [x] Raum als anklickbares Bild — Code fertig, aktiviert sich mit `raum.png`; **Platzhalter-Generator** (`tools/make_placeholders.py`) legt sofort testbare `raum.png` + `titel.png` an *(echte Grafik ausstehend)*
+- [x] Optionale Titelkarte beim Start (`titel.png`, `renpy.loadable`-abgesichert)
+- [x] Datenselbsttest ohne Engine (`selftest.py`) + **CI** (GitHub Actions läuft bei jedem Push/PR) — 9 Objekte, DE+EN, Coda-Logik
 - [x] Ton: Uhr + Anrufbeantworter-Beep als Platzhalter, Atmosphäre & Stimme abgesichert verdrahtet *(echte Assets ausstehend)*
 - [x] Zweisprachig Deutsch / Englisch
 - [x] Feinschliff: Raum-Einstieg (Atmosphäre), Standuhr-Anzeige (Zeit läuft), **Ende reagiert auf die behaltenen Dinge** (warme / harte / unvollendete Coda), Abspann + Lizenz, rollback-sicherer Zustand

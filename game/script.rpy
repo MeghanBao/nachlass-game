@@ -6,7 +6,8 @@
 ## das Spiel sauber auf die Textliste bzw. Stille zurück. Siehe ASSETS.md.
 
 define narr = Character(None)
-image raum = "images/raum.png"   # optional; wird nur gezeigt, wenn vorhanden
+image raum = "images/raum.png"    # optional; wird nur gezeigt, wenn vorhanden
+image titel = "images/titel.png"  # optionale Titelkarte beim Start
 
 ## --- Zustand -------------------------------------------------------------
 default lang = "de"           # "de" | "en"
@@ -260,6 +261,12 @@ screen uhr_hud():
 ## --- Start ---------------------------------------------------------------
 label start:
     scene black
+    # Optionale Titelkarte — nur wenn images/titel.png vorhanden ist.
+    if renpy.loadable("images/titel.png"):
+        scene titel with fade
+        pause
+        scene black with fade
+
     # Zustand für einen sauberen (Neu-)Start zurücksetzen
     $ time_spent = 0
     $ examined = []

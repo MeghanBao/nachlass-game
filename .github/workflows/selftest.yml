@@ -1,0 +1,37 @@
+name: selftest
+
+# Prüft die Spieldaten ohne Ren'Py-Engine bei jedem Push/PR.
+# Validates the game data without the Ren'Py engine on every push/PR.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  data-selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # selftest.py nutzt nur die Standardbibliothek — keine Abhängigkeiten.
+      - name: Run data self-test
+        run: python3 selftest.py
+
+  placeholder-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Pillow
+        run: pip install --quiet Pillow
+      # Stellt sicher, dass der Platzhalter-Generator ohne Fehler durchläuft
+      # und beide PNGs erzeugt (raum.png + titel.png).
+      - name: Generate placeholders
+        run: python3 tools/make_placeholders.py
+      - name: Check both images exist
+        run: test -f game/images/raum.png && test -f game/images/titel.png
