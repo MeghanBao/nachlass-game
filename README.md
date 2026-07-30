@@ -86,7 +86,15 @@ die Ren'Py-Engine.
 4. **„Starten"** klicken. Beim Start wählst du **Sprache (DE/EN)** und **Dauer**.
 
 > Ohne SDK hier nicht ausführbar; die Spiellogik und alle Texte sind aber per
-> Python-Selbsttest geprüft (9 Objekte, alle DE+EN vollständig).
+> Selbsttest ohne Engine geprüft — `python3 selftest.py` (9 Objekte, alle DE+EN
+> vollständig, jede Coda-Verzweigung erreichbar).
+
+**Platzhalter-Raum / placeholder room.** Damit sich der anklickbare Raum sofort
+testen lässt, erzeugt `python tools/make_placeholder_room.py` ein deutlich als
+*PLATZHALTER* markiertes `game/images/raum.png` (1280×720) mit den 9 Objekten an
+ihren `pos`-Koordinaten. Ideal, um die Hotspots gegen die finale Grafik zu prüfen;
+die echte Kunst überschreibt die Datei später (siehe [`ASSETS.md`](ASSETS.md)).
+Benötigt Pillow (`pip install Pillow`).
 
 ## Sprache / Language
 
@@ -123,7 +131,8 @@ läuft das Spiel sauber weiter (Textliste statt Raumbild, Stille statt Ton). Zum
 
 - [x] Kern-Skelett: Zeitwahl → Nachlass durchsehen → Zeit läuft ab → drei Dinge behalten → Traueranzeige
 - [x] Vollständiger Nachlass: **9 Stücke** mit rotem Faden der Entfremdung (Schuld, das nicht mehr gehörte Telefonat, das gegenseitige Schweigen, die tote Tochter dazwischen, das Unausgesprochene)
-- [x] Raum als anklickbares Bild — Code fertig, aktiviert sich mit `raum.png` *(Grafik ausstehend)*
+- [x] Raum als anklickbares Bild — Code fertig, aktiviert sich mit `raum.png`; **Platzhalter-Generator** (`tools/make_placeholder_room.py`) legt sofort ein testbares `raum.png` an *(echte Grafik ausstehend)*
+- [x] Datenselbsttest ohne Engine (`selftest.py`) — 9 Objekte, DE+EN, Coda-Logik
 - [x] Ton: Uhr + Anrufbeantworter-Beep als Platzhalter, Atmosphäre & Stimme abgesichert verdrahtet *(echte Assets ausstehend)*
 - [x] Zweisprachig Deutsch / Englisch
 - [x] Feinschliff: Raum-Einstieg (Atmosphäre), Standuhr-Anzeige (Zeit läuft), **Ende reagiert auf die behaltenen Dinge** (warme / harte / unvollendete Coda), Abspann + Lizenz, rollback-sicherer Zustand

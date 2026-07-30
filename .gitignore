@@ -16,6 +16,11 @@ renpy/
 *-dists/
 /dist/
 
+# Python tooling (selftest / placeholder generator)
+.venv-tools/
+__pycache__/
+*.pyc
+
 # OS / editor
 .DS_Store
 *.swp
